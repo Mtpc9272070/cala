@@ -1,0 +1,38 @@
+name: Ejecutar scraper cada 4 horas
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Instalar Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Ejecutar script
+        run: python scraper.py
+
+      - name: Configurar Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Hacer commit y push si hay cambios
+        run: |
+          git add .
+          git diff --cached --quiet || git commit -m "Actualización automática del scraper"
+          git pull --rebase origin main
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
