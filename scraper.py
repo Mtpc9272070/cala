@@ -35,7 +35,11 @@ for li in soup.find_all('li'):
                     "hora": hora,
                     "enlace": f"Error decoding: {e}"
                 })
+from datetime import datetime
 
-# Guardar archivo JSON
+# Guardar archivo JSON con marca de tiempo incluida
 with open('partidos_completos.json', 'w', encoding='utf-8') as f:
-    json.dump(partidos, f, ensure_ascii=False, indent=2)
+    json.dump({
+        "actualizado": datetime.now().isoformat(),  # <-- Esta línea asegura que siempre haya un cambio
+        "partidos": partidos
+    }, f, ensure_ascii=False, indent=2)
