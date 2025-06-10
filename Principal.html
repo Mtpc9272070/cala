@@ -708,7 +708,8 @@
     ];
     
     // Intentar cargar datos reales del JSON si existe
-    fetch('partidos_completos.json')
+  fetch('partidos_completos.json?t=' + new Date().getTime())
+
   .then(res => res.json())
   .then(data => {
     const agrupados = {};
